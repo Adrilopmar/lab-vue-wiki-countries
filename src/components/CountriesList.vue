@@ -25,32 +25,50 @@
 
 <script>
 import spinnerComponent from'./SpinnerComponent.vue';
+import {ref} from 'vue'
 
 export default {
     name:'CountriesList',
     components:{
       spinnerComponent,
       },
-    data(){
-        return{
-          countries:null,
-        }
-    },
-    methods:{
-     async fetchCuntries(){
-        const res = await fetch('https://ih-countries-api.herokuapp.com/countries');
+      setup(){
+        const countries = ref(null);
 
-        const Countriesdata = await res.json();
-        this.countries = Countriesdata.sort((a,b)=>{
-          return a.name.common.localeCompare(b.name.common)
-        })
+        const fetchCountries = async ()=>{
+          const res = await fetch('https://ih-countries-api.herokuapp.com/countries');
+
+          const finalResponse = await res.json();
+          const sortedCountries = finalResponse.sort((a,b)=>{
+            return a.name.common.localeCompare(b.name.common)
+          });
+          countries.value = sortedCountries
+        };
+        fetchCountries();
+
+        return{countries, fetchCountries}
       },
+    // data(){
+    //     return{
+    //       countries:null,
+    //     }
+    // },
     
-    },
+    // methods:{
+    //  async fetchCuntries(){
+    //     const res = await fetch('https://ih-countries-api.herokuapp.com/countries');
+
+    //     const Countriesdata = await res.json();
+    //     this.countries = Countriesdata.sort((a,b)=>{
+    //       return a.name.common.localeCompare(b.name.common)
+    //     })
+    //   },
+    
+    // },
     // we use created-hook to make the initial call to the db and get the info b4 displaying it
-    created(){
-      this.fetchCuntries();
-    }
+    // created(){
+    //   this.fetchCuntries();
+    // }
 
 
 }
